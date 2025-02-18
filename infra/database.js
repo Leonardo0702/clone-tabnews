@@ -1,13 +1,14 @@
 import { Client } from "pg";
 
 async function query(queryObject) {
+  const handleError = (error) => error;
   let client;
   try {
     client = await getNewClient();
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    throw error;
+    handleError(error);
   } finally {
     await client?.end();
   }
@@ -27,10 +28,12 @@ async function getNewClient() {
   return client;
 }
 
-export default {
+const database = {
   query,
   getNewClient,
 };
+
+export default database;
 
 function getSSLValues() {
   if (process.env.POSTGRES_CA) {
